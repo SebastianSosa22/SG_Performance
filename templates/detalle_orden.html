@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle de Orden de Servicio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+
+        .orden-container {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 30px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .titulo {
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .seccion {
+            margin-bottom: 20px;
+        }
+
+        .seccion h5 {
+            background: #e9ecef;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-left: 4px solid #000;
+        }
+
+        .campo {
+            margin-bottom: 8px;
+        }
+
+        .campo b {
+            display: inline-block;
+            width: 180px;
+        }
+
+        .firmas {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .firmas div {
+            text-align: center;
+            width: 45%;
+        }
+
+        .firmas hr {
+            border: 1px solid #000;
+            margin: 40px 0 5px;
+        }
+
+        .politicas {
+            font-size: 12px;
+            margin-top: 30px;
+            text-align: justify;
+        }
+
+        .politicas h5 {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* Reglas especiales para impresión */
+        @media print {
+            body {
+                background: white !important;
+            }
+
+            img {
+                max-height: 70px !important;
+                max-width: 150px !important;
+            }
+
+            .orden-container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                width: 100%;
+                padding: 20px;
+            }
+
+            .btn,
+            .text-center {
+                display: none !important;
+                /* Ocultar botones al imprimir */
+            }
+
+            @page {
+                size: letter;
+                /* Tamaño carta */
+                margin: 10mm;
+                /* Márgenes de 15 mm */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="orden-container">
+        <div class="titulo">
+            <div class="row align-items-center">
+                <div class="col-4 text-start">
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo Taller"
+                        style="max-height: 90px; max-width: 100%;">
+                </div>
+                <div class="col-8">
+                    <h3>ORDEN DE SERVICIO</h3>
+                    <small>No. Orden: 00{{ orden[0] }}</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATOS DEL CLIENTE -->
+        <div class="seccion">
+            <h5>Datos del Cliente</h5>
+            <div class="row">
+                <div class="col">
+                    <div class="campo"><b>Nombre:</b> {{ orden[9] }}</div>
+                </div>
+                <div class="col">
+                    <div class="campo"><b>Teléfono:</b> {{ orden[10] }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATOS DEL VEHÍCULO -->
+        <div class="seccion">
+            <h5>Datos del Vehículo</h5>
+            <div class="row">
+                <div class="col">
+                    <div class="campo"><b>Marca:</b> {{ orden[1] }}</div>
+
+                </div>
+                <div class="col">
+                    <div class="campo"><b>Modelo:</b> {{ orden[2] }}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="campo"><b>Año:</b> {{ orden[3] }}</div>
+                </div>
+                <div class="col">
+                    <div class="campo"><b>Kilometraje:</b> {{ orden[4] }} km</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="campo"><b>Placas:</b> {{ orden[5] }}</div>
+                </div>
+                <div class="col">
+                    <div class="campo"><b>Ingreso en grúa:</b> {{ orden[6] }}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"><b>VIN:</b> {{ orden[]}}</div>
+            </div>
+
+
+
+        </div>
+
+        <!-- FECHAS -->
+        <div class="seccion">
+            <h5>Fechas</h5>
+            <div class="row">
+                <div class="col">
+                    <div class="campo"><b>Ingreso:</b> {{ orden[7] }}</div>
+                </div>
+                <div class="col">
+                    <div class="campo"><b>Salida:</b> {{ orden[8] }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col"> <!-- SERVICIOS -->
+                <div class="seccion">
+                    <h5>Servicios Solicitados</h5>
+                    <p>{{ orden[11] }}</p>
+                </div>
+            </div>
+            <div class="col"><!-- DAÑOS -->
+                <div class="seccion">
+                    <h5>Daños Preexistentes</h5>
+                    <p>{{ orden[12] }}</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- OBSERVACIONES -->
+        <div class="seccion">
+            <h5>Observaciones / Diagnóstico</h5>
+            <p>{{ orden[13] }}</p>
+        </div>
+        <!-- SERVICIOS REALIZADOS -->
+        <div class="seccion">
+            <h5>Servicios Realizados / Refacciones</h5>
+            <p>{{ orden[14] }}</p>
+        </div>
+
+
+        <!-- PRESUPUESTO -->
+        <div class="seccion">
+            <h5>Presupuesto Autorizado</h5>
+            <p><b>Total:</b> ${{ orden[15] }} M.N.</p>
+        </div>
+
+        <!-- FIRMAS -->
+        <div class="firmas">
+            <div>
+                <hr>
+                <p>Firma del Cliente</p>
+            </div>
+            <div>
+                <hr>
+                <p>Firma del Mecánico</p>
+            </div>
+        </div>
+
+        <!-- POLÍTICAS DEL TALLER -->
+        <div class="politicas">
+            <h5>Políticas del Taller</h5>
+            <ol>
+                <li>Cobro por pensión: Si el vehículo no es recogido el mismo día de la notificación, se cobrará $100
+                    M.N. diarios.</li>
+                <li>No nos hacemos responsables por objetos de valor no declarados al ingresar el vehículo.</li>
+                <li>El tiempo de entrega es estimado y puede variar según disponibilidad de refacciones o daños
+                    adicionales.</li>
+                <li>No se realizan reparaciones sin autorización expresa del cliente.</li>
+                <li>Garantía: 60 días o 2,000 km (lo que ocurra primero), solo sobre reparaciones realizadas. No aplica
+                    a piezas del cliente.</li>
+                <li>El pago debe realizarse en su totalidad al momento de la entrega del vehículo.</li>
+                <li>El vehículo no recogido en 7 días podrá ser remitido a pensión con cargos adicionales.</li>
+                <li>Las piezas reemplazadas podrán ser entregadas si el cliente lo solicita en el momento de la entrega.
+                </li>
+                <li>El costo de traslado al taller (grúa o asistencia) corre por cuenta del cliente salvo acuerdo
+                    previo.</li>
+                <li>No somos responsables por daños por fenómenos naturales, robos o vandalismo.</li>
+            </ol>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">⬅ Volver</a>
+            <button class="btn btn-primary" onclick="window.print()">🖨 Imprimir</button>
+            <button class="btn btn-success" onclick="">🖨 WhatsApp</button>
+        </div>
+    </div>
+</body>
+
+</html>
