@@ -10,33 +10,38 @@
 
 <body class="bg-light p-4">
     <div class="container">
-        <h2 class="mb-4">Órdenes de Servicio Guardadas</h2>
-        <a href="{{ url_for('orden') }}" class="btn btn-primary mb-3">➕ Nueva Orden</a>
-
-        <!-- Barra de búsqueda avanzada -->
-        <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-                <form id="searchForm" class="row g-2">
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar por Cliente">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" id="buscarPlacas" placeholder="Placas">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" id="buscarTelefono" placeholder="Teléfono">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" class="form-control" id="buscarIngreso">
-                    </div>
-                    <div class="col-md-2">
-                        <input type="date" class="form-control" id="buscarSalida">
-                    </div>
-                    <div class="col-md-1 d-grid">
-                        <button type="button" class="btn btn-secondary" onclick="limpiarFiltros()">Limpiar</button>
-                    </div>
-                </form>
+        <h2 class="mb-4">Órdenes de Servicio</h2>
+        <div class="row align-items-center">
+            <div class="col-2">
+                <a href="{{ url_for('orden') }}" class="btn btn-primary mb-3">➕ Nueva Orden</a>
             </div>
+            <div class="col-10">
+                <!-- Barra de búsqueda avanzada -->
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <form id="searchForm" class="row g-2">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="buscarCliente"
+                                    placeholder="Buscar por Cliente">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="buscarVehiculo" placeholder="Vehículo">
+                            </div>
+                            <!-- <div class="col-md-2">
+                                <input type="date" class="form-control" id="buscarIngreso">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="date" class="form-control" id="buscarSalida">
+                            </div> -->
+                            <div class="col-md-1 d-grid">
+                                <button type="button" class="btn btn-secondary"
+                                    onclick="limpiarFiltros()">Limpiar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Tabla -->
@@ -97,13 +102,13 @@
         function filtrarTabla() {
             const cliente = document.getElementById('buscarCliente').value.toLowerCase();
             const placas = document.getElementById('buscarPlacas').value.toLowerCase();
-            const telefono = document.getElementById('buscarTelefono').value.toLowerCase();
+            const vehiculo = document.getElementById('buscarVehiculo').value.toLowerCase();
             const ingreso = document.getElementById('buscarIngreso').value;
             const salida = document.getElementById('buscarSalida').value;
 
             rows.forEach(row => {
                 const cCliente = row.cells[1].textContent.toLowerCase();
-                const cTelefono = row.cells[2].textContent.toLowerCase();
+                const cVehiculo = row.cells[3].textContent.toLowerCase();
                 const cPlacas = row.cells[4].textContent.toLowerCase();
                 const cIngreso = row.cells[6].textContent;
                 const cSalida = row.cells[7].textContent;
@@ -112,7 +117,7 @@
 
                 if (cliente && !cCliente.includes(cliente)) mostrar = false;
                 if (placas && !cPlacas.includes(placas)) mostrar = false;
-                if (telefono && !cTelefono.includes(telefono)) mostrar = false;
+                if (vehiculo && !cVehiculo.includes(vehiculo)) mostrar = false;
                 if (ingreso && !cIngreso.includes(ingreso)) mostrar = false;
                 if (salida && !cSalida.includes(salida)) mostrar = false;
 
