@@ -130,10 +130,10 @@
             <h5>Datos del Cliente</h5>
             <div class="row">
                 <div class="col">
-                    <div class="campo"><b>Nombre:</b> {{ orden[9] }}</div>
+                    <div class="campo"><b>Nombre:</b> {{ orden.nombre }}</div>
                 </div>
                 <div class="col">
-                    <div class="campo"><b>Teléfono:</b> {{ orden[10] }}</div>
+                    <div class="campo"><b>Teléfono:</b> {{ orden.telefono }}</div>
                 </div>
             </div>
         </div>
@@ -143,31 +143,31 @@
             <h5>Datos del Vehículo</h5>
             <div class="row">
                 <div class="col">
-                    <div class="campo"><b>Marca:</b> {{ orden[1] }}</div>
+                    <div class="campo"><b>Marca:</b> {{ orden.marca }}</div>
 
                 </div>
                 <div class="col">
-                    <div class="campo"><b>Modelo:</b> {{ orden[2] }}</div>
+                    <div class="campo"><b>Modelo:</b> {{ orden.modelo }}</div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="campo"><b>Año:</b> {{ orden[3] }}</div>
+                    <div class="campo"><b>Año:</b> {{ orden.ano }}</div>
                 </div>
                 <div class="col">
-                    <div class="campo"><b>Kilometraje:</b> {{ orden[4] }} km</div>
+                    <div class="campo"><b>Kilometraje:</b> {{ orden.kilometraje }} km</div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="campo"><b>Placas:</b> {{ orden[5] }}</div>
+                    <div class="campo"><b>Placas:</b> {{ orden.placas }}</div>
                 </div>
                 <div class="col">
-                    <div class="campo"><b>Ingreso en grúa:</b> {{ orden[6] }}</div>
+                    <div class="campo"><b>Ingreso en grúa:</b> {{ orden.ingreso_grua }}</div>
                 </div>
             </div>
             <div class="row">
-                <div class="col"><b>VIN:</b> {{ orden[]}}</div>
+                <div class="col"><b>VIN:</b> {{ orden.vin}}</div>
             </div>
 
 
@@ -179,10 +179,15 @@
             <h5>Fechas</h5>
             <div class="row">
                 <div class="col">
-                    <div class="campo"><b>Ingreso:</b> {{ orden[7] }}</div>
+                    <div class="campo"><b>Ingreso:</b> {{ orden.ingreso }}</div>
                 </div>
                 <div class="col">
-                    <div class="campo"><b>Salida:</b> {{ orden[8] }}</div>
+                    <div class="campo"><b>Salida:</b> {% if orden.salida %}
+                        {{ orden.salida }}
+                        {% else %}
+                        <span class="text-muted">Pendiente</span>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -191,13 +196,13 @@
             <div class="col"> <!-- SERVICIOS -->
                 <div class="seccion">
                     <h5>Servicios Solicitados</h5>
-                    <p>{{ orden[11] }}</p>
+                    <p>{{ orden.servicios }}</p>
                 </div>
             </div>
             <div class="col"><!-- DAÑOS -->
                 <div class="seccion">
                     <h5>Daños Preexistentes</h5>
-                    <p>{{ orden[12] }}</p>
+                    <p>{{ orden.danos }}</p>
                 </div>
             </div>
         </div>
@@ -206,19 +211,19 @@
         <!-- OBSERVACIONES -->
         <div class="seccion">
             <h5>Observaciones / Diagnóstico</h5>
-            <p>{{ orden[13] }}</p>
+            <p>{{ orden.observaciones }}</p>
         </div>
         <!-- SERVICIOS REALIZADOS -->
         <div class="seccion">
             <h5>Servicios Realizados / Refacciones</h5>
-            <p>{{ orden[14] }}</p>
+            <p>{{ orden.realizados }}</p>
         </div>
 
 
         <!-- PRESUPUESTO -->
         <div class="seccion">
             <h5>Presupuesto Autorizado</h5>
-            <p><b>Total:</b> ${{ orden[15] }} M.N.</p>
+            <p><b>Total:</b> ${{ orden.presupuesto }} M.N.</p>
         </div>
 
 
