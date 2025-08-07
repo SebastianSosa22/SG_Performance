@@ -1,0 +1,43 @@
+<!-- register.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Usuario</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light p-5">
+    <div class="container col-md-4">
+        <h3 class="mb-4">Registro de Usuario</h3>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" name="nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" name="password" required>
+            </div>
+            <div class="mb-3">
+                <label for="rol" class="form-label">Rol</label>
+                <select name="rol" class="form-select" required>
+                    <option value="administrador">Administrador</option>
+                    <option value="mecanico">Mecánico</option>
+                    <option value="jefe_de_taller">Jefe de Taller</option>
+                    <option value="hojalatero">Hojalatero</option>
+                    <option value="dueno">Dueño de Taller</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Registrar</button>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-link">Iniciar sesión</a>
+        </form>
+    </div>
+</body>
+
+</html>

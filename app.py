@@ -1,32 +1,40 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import os
+from auth import auth_bp, requiere_rol
 
-# Cargar variables de entorno desde .env
+# -------------------
+# Cargar configuración
+# -------------------
 load_dotenv()
 
-# Conexión a Supabase
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError(
-        "⚠️ Faltan las variables SUPABASE_URL o SUPABASE_KEY en el archivo .env o en Render")
+        "\u26a0\ufe0f Faltan las variables SUPABASE_URL o SUPABASE_KEY en el archivo .env o en Render")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", "clave-secreta-por-defecto")
 
+# Registrar blueprint de autenticación
+app.register_blueprint(auth_bp)
 
 # -------------------
 #   RUTA PRINCIPAL
 # -------------------
+
+
 @app.route("/")
+@requiere_rol(["administrador", "dueno"])
 def index():
     response = supabase.table("orden_servicio").select(
         "*").order("id", desc=True).execute()
-    ordenes = response.data if response.data else []
+    ordenes = response.data or []
     return render_template("lista_ordenes.html", ordenes=ordenes)
 
 
@@ -34,13 +42,13 @@ def index():
 #   CREAR ORDEN
 # -------------------
 @app.route("/orden", methods=["GET", "POST"])
+@requiere_rol(["administrador", "dueno"])
 def orden():
     if request.method == "POST":
         ingreso = request.form.get("ingreso")
         if not ingreso:
-            return "⚠️ Debes ingresar la fecha de ingreso", 400
+            return "\u26a0\ufe0f Debes ingresar la fecha de ingreso", 400
 
-        # Convertir salida vacía a None
         salida = request.form.get("salida") or None
 
         datos = {
@@ -51,8 +59,8 @@ def orden():
             "placas": request.form["placas"],
             "ingreso_grua": request.form.get("ingreso_grua", "No"),
             "vin": request.form.get("vin"),
-            "ingreso": ingreso,       # obligatorio
-            "salida": salida,         # opcional
+            "ingreso": ingreso,
+            "salida": salida,
             "nombre": request.form["nombre"],
             "telefono": request.form["telefono"],
             "servicios": ", ".join(request.form.getlist("servicios")),
@@ -72,22 +80,21 @@ def orden():
 #   DETALLE ORDEN
 # -------------------
 @app.route("/orden/<int:orden_id>")
+@requiere_rol(["administrador", "dueno"])
 def detalle(orden_id):
-    response = supabase.table("orden_servicio").select(
-        "*").eq("id", orden_id).single().execute()
-    orden = response.data
-
-    checklist = supabase.table("checklist").select(
-        "*").eq("orden_id", orden_id).execute()
-    checklist_data = checklist.data[0] if checklist.data else None
-
-    return render_template("detalle_orden.html", orden=orden, checklist=checklist_data)
+    orden = supabase.table("orden_servicio").select(
+        "*").eq("id", orden_id).single().execute().data
+    checklist_data = supabase.table("checklist").select(
+        "*").eq("orden_id", orden_id).execute().data
+    checklist = checklist_data[0] if checklist_data else None
+    return render_template("detalle_orden.html", orden=orden, checklist=checklist)
 
 
 # -------------------
 #   BORRAR ORDEN
 # -------------------
 @app.route("/borrar/<int:orden_id>")
+@requiere_rol(["administrador", "dueno"])
 def borrar(orden_id):
     supabase.table("orden_servicio").delete().eq("id", orden_id).execute()
     return redirect(url_for("index"))
@@ -97,6 +104,7 @@ def borrar(orden_id):
 #   CHECKLIST
 # -------------------
 @app.route("/checklist/<int:orden_id>", methods=["GET", "POST"])
+@requiere_rol(["administrador", "dueno"])
 def checklist(orden_id):
     if request.method == "POST":
         datos = {

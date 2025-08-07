@@ -10,84 +10,83 @@
 
 <body class="bg-light p-4">
     <div class="container">
-        <h2 class="mb-4">Orden de Servicio</h2>
+        <h2 class="mb-4">Nueva Orden de Servicio</h2>
         <form method="POST">
-            <div class="row mb-3">
-                <div class="col">
-                    <label>Marca</label>
-                    <input class="form-control" name="marca" required>
-                </div>
-                <div class="col">
-                    <label>Modelo</label>
-                    <input class="form-control" name="modelo" required>
-                </div>
-                <div class="col">
-                    <label>Año</label>
-                    <input class="form-control" name="ano">
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <label>Kilometraje</label>
-                    <input class="form-control" name="kilometraje">
-                </div>
-                <div class="col">
-                    <label>Placas</label>
-                    <input class="form-control" name="placas">
-                </div>
-                <div class="col">
-                    <label>Ingreso en grúa</label>
-                    <select class="form-select" name="ingreso_grua">
-                        <option>No</option>
-                        <option>Sí</option>
-                    </select>
+            <!-- Informacion Cliente -->
+            <div class="mb-4">
+                <h5>Datos del Cliente</h5>
+                <div class="row mb-2">
+                    <div class="col">
+                        <label>Nombre del Cliente</label>
+                        <input class="form-control" name="nombre" required>
+                    </div>
+                    <div class="col">
+                        <label>Teléfono</label>
+                        <input class="form-control" name="telefono">
+                    </div>
                 </div>
             </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <label>VIN</label>
-                    <input class="form-control" name="vin">
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <label>Ingreso</label>
-                    <input type="date" class="form-control" name="ingreso">
-                </div>
-                <div class="mb-3">
-                    <label for="salida">Fecha de Salida</label>
-                    <input type="date" id="salida" name="salida" class="form-control">
-                </div>
-
-            </div>
-
-            <div class="mb-3">
-                <label>Nombre del Cliente</label>
-                <input class="form-control" name="nombre" required>
-            </div>
-            <div class="mb-3">
-                <label>Teléfono</label>
-                <input class="form-control" name="telefono">
-            </div>
-
-            <div class="mb-3">
-                <label>Servicios Solicitados</label><br>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" name="servicios" value="Mantenimiento Preventivo">
-                    <label class="form-check-label">Mantenimiento Preventivo</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" name="servicios" value="Reparación Específica">
-                    <label class="form-check-label">Reparación Específica</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" name="servicios" value="Diagnóstico / Escaneo">
-                    <label class="form-check-label">Diagnóstico / Escaneo</label>
+            <!-- Informacion Vehiculo -->
+            <div class="mb-4">
+                <h5>Datos del Vehiculo</h5>
+                <div class="row mb-2">
+                    <div class="col">
+                        <label>Marca</label>
+                        <input class="form-control" name="marca" required>
+                    </div>
+                    <div class="col">
+                        <label>Modelo</label>
+                        <input class="form-control" name="modelo" required>
+                    </div>
+                    <div class="col">
+                        <label>Año</label>
+                        <input class="form-control" name="ano">
+                    </div>
                 </div>
 
+                <div class="row mb-2">
+                    <div class="col">
+                        <label>Kilometraje</label>
+                        <input class="form-control" name="kilometraje">
+                    </div>
+                    <div class="col">
+                        <label>Placas</label>
+                        <input class="form-control" name="placas">
+                    </div>
+                    <div class="col">
+                        <label>Ingreso en grúa</label>
+                        <select class="form-select" name="ingreso_grua">
+                            <option>No</option>
+                            <option>Sí</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-8">
+                        <label>VIN</label>
+                        <input class="form-control" name="vin">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-2">
+                        <label>Servicios Solicitados</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="servicios"
+                                value="Mantenimiento Preventivo">
+                            <label class="form-check-label">Mantenimiento Preventivo</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="servicios"
+                                value="Reparación Específica">
+                            <label class="form-check-label">Reparación Específica</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" name="servicios"
+                                value="Diagnóstico / Escaneo">
+                            <label class="form-check-label">Diagnóstico / Escaneo</label>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-3">
