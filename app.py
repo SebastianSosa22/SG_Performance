@@ -81,7 +81,7 @@ def orden():
 
 
 @app.route("/editar/<int:orden_id>", methods=["GET", "POST"])
-@requiere_rol(["administrador", "dueno"])
+@requiere_rol(["administrador", "dueno", "mecanico", "hojalatero"])
 def editar_orden(orden_id):
     if request.method == "POST":
         datos = {
