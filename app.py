@@ -30,7 +30,7 @@ app.register_blueprint(auth_bp)
 
 
 @app.route("/")
-@requiere_rol(["administrador", "dueno"])
+@requiere_rol(["administrador", "dueno", "mecanico", "hojalatero"])
 def index():
     response = supabase.table("orden_servicio").select(
         "*").order("id", desc=True).execute()
@@ -42,7 +42,7 @@ def index():
 #   CREAR ORDEN
 # -------------------
 @app.route("/orden", methods=["GET", "POST"])
-@requiere_rol(["administrador", "dueno"])
+@requiere_rol(["administrador", "dueno", "mecanico", "hojalatero"])
 def orden():
     if request.method == "POST":
         ingreso = request.form.get("ingreso")
@@ -75,12 +75,49 @@ def orden():
 
     return render_template("orden_servicio.html")
 
+# -------------------
+#   EDITAR ORDEN
+# -------------------
+
+
+@app.route("/editar/<int:orden_id>", methods=["GET", "POST"])
+@requiere_rol(["administrador", "dueno"])
+def editar_orden(orden_id):
+    if request.method == "POST":
+        datos = {
+            "marca": request.form["marca"],
+            "modelo": request.form["modelo"],
+            "ano": request.form.get("ano"),
+            "nombre": request.form["nombre"],
+            "telefono": request.form["telefono"],
+            "placas": request.form["placas"],
+            "vin": request.form.get("vin"),
+            "kilometraje": request.form.get("kilometraje"),
+            "ingreso_grua": request.form.get("ingreso_grua", "No"),
+            "ingreso": request.form.get("ingreso"),
+            # Aquí se actualiza siempre
+            "salida": request.form.get("salida") if request.form.get("salida") else None,
+            "servicios": ", ".join(request.form.getlist("servicios")),
+            "danos": request.form["danos"],
+            "observaciones": request.form["observaciones"],
+            "realizados": request.form["realizados"],
+            "presupuesto": request.form["presupuesto"]
+        }
+
+        supabase.table("orden_servicio").update(
+            datos).eq("id", orden_id).execute()
+        return redirect(url_for("index"))
+
+    orden = supabase.table("orden_servicio").select(
+        "*").eq("id", orden_id).single().execute().data
+    return render_template("editar_orden.html", orden=orden)
+
 
 # -------------------
 #   DETALLE ORDEN
 # -------------------
 @app.route("/orden/<int:orden_id>")
-@requiere_rol(["administrador", "dueno"])
+@requiere_rol(["administrador", "dueno", "mecanico", "hojalatero"])
 def detalle(orden_id):
     orden = supabase.table("orden_servicio").select(
         "*").eq("id", orden_id).single().execute().data
@@ -94,7 +131,7 @@ def detalle(orden_id):
 #   BORRAR ORDEN
 # -------------------
 @app.route("/borrar/<int:orden_id>")
-@requiere_rol(["administrador", "dueno"])
+@requiere_rol(["administrador", "dueno", "mecanico", "hojalatero"])
 def borrar(orden_id):
     supabase.table("orden_servicio").delete().eq("id", orden_id).execute()
     return redirect(url_for("index"))
@@ -104,7 +141,7 @@ def borrar(orden_id):
 #   CHECKLIST
 # -------------------
 @app.route("/checklist/<int:orden_id>", methods=["GET", "POST"])
-@requiere_rol(["administrador", "dueno"])
+@requiere_rol(["administrador", "dueno", "mecanico", "hojalatero"])
 def checklist(orden_id):
     if request.method == "POST":
         datos = {

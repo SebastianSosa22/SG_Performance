@@ -20,18 +20,23 @@
                 <label for="email" class="form-label">Correo electrónico</label>
                 <input type="email" class="form-control" name="email" required>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 position-relative">
                 <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" name="password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                        👁
+                    </button>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="rol" class="form-label">Rol</label>
                 <select name="rol" class="form-select" required>
                     <option value="administrador">Administrador</option>
-                    <option value="mecanico">Mecánico</option>
-                    <option value="jefe_de_taller">Jefe de Taller</option>
-                    <option value="hojalatero">Hojalatero</option>
                     <option value="dueno">Dueño de Taller</option>
+                    <option value="mecanico">Mecánico</option>
+                    <!-- <option value="jefe_de_taller">Jefe de Taller</option> -->
+                    <option value="hojalatero">Hojalatero</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-success">Registrar</button>
@@ -39,5 +44,16 @@
         </form>
     </div>
 </body>
+
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+
+    togglePassword.addEventListener('click', () => {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        togglePassword.textContent = type === 'password' ? '👁' : '👁';
+    });
+</script>
 
 </html>
