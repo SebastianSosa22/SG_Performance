@@ -155,7 +155,8 @@
                     <div class="campo"><b>Año:</b> {{ orden.ano }}</div>
                 </div>
                 <div class="col">
-                    <div class="campo"><b>Kilometraje:</b> {{ orden.kilometraje }} km</div>
+                    <div class="campo"><b>Kilometraje:</b> {{ "{:,}".format(orden.kilometraje|int) }} km</div>
+
                 </div>
             </div>
             <div class="row">
@@ -196,13 +197,35 @@
             <div class="col"> <!-- SERVICIOS -->
                 <div class="seccion">
                     <h5>Servicios Solicitados</h5>
-                    <p>{{ orden.servicios }}</p>
+                    {% if orden.servicios %}
+                    {% for servicio in orden.servicios.replace("\r", "").split("\n") %}
+                    {% if servicio.strip() %}
+                    <li>{{ servicio.strip() }}</li>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <li>No hay servicios registrados</li>
+                    {% endif %}
+
+                    <!-- <p>{{ orden.servicios }}</p> -->
                 </div>
             </div>
             <div class="col"><!-- DAÑOS -->
                 <div class="seccion">
                     <h5>Daños Preexistentes</h5>
-                    <p>{{ orden.danos }}</p>
+                    <ul>
+                        {% if orden.danos %}
+                        {% for servicio in orden.danos.replace("\r", "").split("\n") %}
+                        {% if servicio.strip() %}
+                        <li>{{ servicio.strip() }}</li>
+                        {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <li>No hay daños registrados</li>
+                        {% endif %}
+
+                    </ul>
+                    <!-- <p>{{ orden.danos }}</p> -->
                 </div>
             </div>
         </div>
@@ -215,15 +238,26 @@
         </div>
         <!-- SERVICIOS REALIZADOS -->
         <div class="seccion">
-            <h5>Servicios Realizados / Refacciones</h5>
-            <p>{{ orden.realizados }}</p>
+            <h5>Servicios Realizados</h5>
+            <ul>
+                {% if orden.realizados %}
+                {% for servicio in orden.realizados.replace("\r", "").split("\n") %}
+                {% if servicio.strip() %}
+                <li>{{ servicio.strip() }}</li>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <li>No hay realizados Servicios Realizados</li>
+                {% endif %}
+            </ul>
         </div>
+
 
 
         <!-- PRESUPUESTO -->
         <div class="seccion">
             <h5>Presupuesto Autorizado</h5>
-            <p><b>Total:</b> ${{ orden.presupuesto }} M.N.</p>
+            <p><b>Total:</b> ${{ "{:,.2f}".format(orden.presupuesto|float) }} M.N.</p>
         </div>
 
 
