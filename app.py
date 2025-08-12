@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+import requests
+import os
+
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from supabase import create_client, Client
 from dotenv import load_dotenv
-import os
 from auth import auth_bp, requiere_rol
 
 # -------------------
@@ -27,6 +29,13 @@ app.register_blueprint(auth_bp)
 # -------------------
 #   RUTA PRINCIPAL
 # -------------------
+
+# Inyecta 'usuario' en todas las plantillas
+
+
+@app.context_processor
+def inject_usuario():
+    return dict(usuario=session.get("usuario"))
 
 
 @app.route("/")
@@ -167,6 +176,40 @@ def checklist(orden_id):
         return redirect(url_for("detalle", orden_id=orden_id))
 
     return render_template("checklist.html", orden_id=orden_id)
+
+# -------------------
+#   BUSCAR VIN
+# -------------------
+
+
+@app.route("/api/vin/<vin>")
+def buscar_vin(vin):
+    try:
+        url = f"https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvaluesextended/{vin}?format=json"
+        r = requests.get(url)
+        data = r.json()
+
+        if "Results" not in data or not data["Results"]:
+            return jsonify({"error": "No se encontró información para este VIN"}), 404
+
+        result = data["Results"][0]
+
+        return jsonify({
+            "marca": result.get("Make"),
+            "modelo": result.get("Model"),
+            "ano": result.get("ModelYear"),
+            "carroceria": result.get("BodyClass"),
+            "puertas": result.get("Doors"),
+            "motor": result.get("EngineModel"),
+            "cilindrada": result.get("DisplacementL"),
+            "cilindros": result.get("EngineCylinders"),
+            "combustible": result.get("FuelTypePrimary"),
+            "transmision": result.get("TransmissionStyle"),
+            "ensamblaje": f"{result.get('PlantCity')}, {result.get('PlantCountry')}"
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # -------------------

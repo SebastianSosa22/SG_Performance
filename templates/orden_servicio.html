@@ -61,12 +61,26 @@
                         </select>
                     </div>
                 </div>
-                <div class="row mb-2">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>VIN</label>
+                        <input type="text" class="form-control" name="vin" id="vinInput"
+                            placeholder="Ej: WBA3A5106FJ542774">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>&nbsp;</label>
+                        <button type="button" class="btn btn-primary w-100" id="buscarVin">
+                            🔍 Buscar VIN
+                        </button>
+                    </div>
+                </div>
+
+                <!-- <div class="row mb-2">
                     <div class="col-8">
                         <label>VIN</label>
                         <input class="form-control" name="vin" required>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="row mb-3">
                     <div class="col">
@@ -140,5 +154,36 @@
         });
     });
 </script>
+
+
+<script>
+    document.getElementById("buscarVin").addEventListener("click", function () {
+        let vin = document.getElementById("vinInput").value.trim();
+        if (!vin) {
+            alert("Por favor ingresa un VIN válido.");
+            return;
+        }
+
+        fetch(`/api/vin/${vin}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                document.querySelector("[name='marca']").value = data.marca || "";
+                document.querySelector("[name='modelo']").value = data.modelo || "";
+                document.querySelector("[name='ano']").value = data.ano || "";
+                document.querySelector("[name='observaciones']").value =
+                    `Carrocería: ${data.carroceria || ''}, Puertas: ${data.puertas || ''}, Motor: ${data.motor || ''}, ` +
+                    `Cilindrada: ${data.cilindrada || ''}L, Cilindros: ${data.cilindros || ''}, Combustible: ${data.combustible || ''}, ` +
+                    `Transmisión: ${data.transmision || ''}, Ensamblaje: ${data.ensamblaje || ''}`;
+            })
+            .catch(err => {
+                alert("Error al buscar VIN: " + err);
+            });
+    });
+</script>
+
 
 </html>
