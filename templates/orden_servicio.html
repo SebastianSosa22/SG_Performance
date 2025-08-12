@@ -12,7 +12,8 @@
     <div class="container">
         <h2 class="mb-4">Nueva Orden de Servicio</h2>
         <form method="POST">
-            <!-- Informacion Cliente -->
+
+            <!-- Datos del Cliente -->
             <div class="mb-4">
                 <h5>Datos del Cliente</h5>
                 <div class="row mb-2">
@@ -26,9 +27,10 @@
                     </div>
                 </div>
             </div>
-            <!-- Informacion Vehiculo -->
+
+            <!-- Datos del Vehículo -->
             <div class="mb-4">
-                <h5>Datos del Vehiculo</h5>
+                <h5>Datos del Vehículo</h5>
                 <div class="row mb-2">
                     <div class="col">
                         <label>Marca</label>
@@ -61,6 +63,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label>VIN</label>
@@ -75,13 +78,6 @@
                     </div>
                 </div>
 
-                <!-- <div class="row mb-2">
-                    <div class="col-8">
-                        <label>VIN</label>
-                        <input class="form-control" name="vin" required>
-                    </div>
-                </div> -->
-
                 <div class="row mb-3">
                     <div class="col">
                         <label>Ingreso</label>
@@ -92,98 +88,139 @@
                         <input type="date" class="form-control" name="salida">
                     </div>
                 </div>
+            </div>
 
-                <!-- Campo de búsqueda de servicios -->
-                <div class="mb-3">
-                    <label>Servicios solicitados</label>
-                    <input type="text" class="form-control mb-2" id="buscarServicio" placeholder="Buscar servicio...">
+            <!-- Servicios Solicitados -->
+            <div class="mb-3">
+                <h5>Servicios Solicitados</h5>
 
-                    <div id="listaServicios">
-                        {% set lista_servicios = [
-                        "Cambio de aceite", "Frenos", "Alineación", "Balanceo",
-                        "Revisión de motor", "Cambio de llantas", "Afinación",
-                        "Cambio de batería", "Revisión eléctrica", "Cambio de bujías"
-                        ] %}
-                        {% for servicio in lista_servicios %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="servicios" value="{{ servicio }}" {%
-                                if servicio in servicios_seleccionados %}checked{% endif %}>
-                            <label class="form-check-label">{{ servicio }}</label>
-                        </div>
-                        {% endfor %}
+                <!-- Vista previa de seleccionados -->
+                <div class="mb-3 p-2 border rounded bg-white">
+                    <strong>Seleccionados:</strong>
+                    <div id="serviciosSeleccionados" class="mt-2">
+                        <span class="text-muted small">Ningún servicio seleccionado</span>
                     </div>
+                </div>
+
+
+                <!-- Acordeón de categorías -->
+                <div class="accordion" id="accordionServicios">
+                    {% for categoria in categorias %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ categoria.id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{ categoria.id }}" aria-expanded="false"
+                                aria-controls="collapse{{ categoria.id }}">
+                                {{ categoria.nombre }}
+                            </button>
+                        </h2>
+                        <div id="collapse{{ categoria.id }}" class="accordion-collapse collapse"
+                            aria-labelledby="heading{{ categoria.id }}" data-bs-parent="#accordionServicios">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    {% for servicio in categoria.servicios %}
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input servicio-checkbox" type="checkbox"
+                                                name="servicios" value="{{ servicio.nombre }}">
+                                            <label class="form-check-label">{{ servicio.nombre }}</label>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
+            <!-- Otros campos -->
             <div class="mb-3">
                 <label>Daños Preexistentes</label>
                 <textarea class="form-control" name="danos"></textarea>
             </div>
-
             <div class="mb-3">
                 <label>Observaciones</label>
                 <textarea class="form-control" name="observaciones" required></textarea>
             </div>
-
             <div class="mb-3">
                 <label>Servicios Realizados / Refacciones</label>
                 <textarea class="form-control" name="realizados" required></textarea>
             </div>
-
             <div class="mb-3">
                 <label>Presupuesto Autorizado</label>
                 <input class="form-control" name="presupuesto">
             </div>
 
+            <!-- Botones -->
             <a href="{{ url_for('index') }}" class="btn btn-secondary">⬅ Volver</a>
-
             <button class="btn btn-primary">Guardar</button>
         </form>
     </div>
-</body>
 
-<!-- Script para búsqueda en vivo -->
-<script>
-    document.getElementById('buscarServicio').addEventListener('keyup', function () {
-        let filtro = this.value.toLowerCase();
-        let items = document.querySelectorAll('#listaServicios .form-check');
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        items.forEach(function (item) {
-            let texto = item.textContent.toLowerCase();
-            item.style.display = texto.includes(filtro) ? '' : 'none';
+    <!-- Script VIN -->
+    <script>
+        document.getElementById("buscarVin").addEventListener("click", function () {
+            let vin = document.getElementById("vinInput").value.trim();
+            if (!vin) {
+                alert("Por favor ingresa un VIN válido.");
+                return;
+            }
+            fetch(`/api/vin/${vin}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    document.querySelector("[name='marca']").value = data.marca || "";
+                    document.querySelector("[name='modelo']").value = data.modelo || "";
+                    document.querySelector("[name='ano']").value = data.ano || "";
+                    document.querySelector("[name='observaciones']").value =
+                        `Carrocería: ${data.carroceria || ''}, Puertas: ${data.puertas || ''}, Motor: ${data.motor || ''}, ` +
+                        `Cilindrada: ${data.cilindrada || ''}L, Cilindros: ${data.cilindros || ''}, Combustible: ${data.combustible || ''}, ` +
+                        `Transmisión: ${data.transmision || ''}, Ensamblaje: ${data.ensamblaje || ''}`;
+                })
+                .catch(err => {
+                    alert("Error al buscar VIN: " + err);
+                });
         });
-    });
-</script>
+    </script>
 
+    <!-- Script para mostrar servicios seleccionados -->
+    <script>
+        const checkboxes = document.querySelectorAll('.servicio-checkbox');
+        const contenedorSeleccionados = document.getElementById('serviciosSeleccionados');
 
-<script>
-    document.getElementById("buscarVin").addEventListener("click", function () {
-        let vin = document.getElementById("vinInput").value.trim();
-        if (!vin) {
-            alert("Por favor ingresa un VIN válido.");
-            return;
-        }
+        checkboxes.forEach(chk => {
+            chk.addEventListener('change', actualizarSeleccionados);
+        });
 
-        fetch(`/api/vin/${vin}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-                document.querySelector("[name='marca']").value = data.marca || "";
-                document.querySelector("[name='modelo']").value = data.modelo || "";
-                document.querySelector("[name='ano']").value = data.ano || "";
-                document.querySelector("[name='observaciones']").value =
-                    `Carrocería: ${data.carroceria || ''}, Puertas: ${data.puertas || ''}, Motor: ${data.motor || ''}, ` +
-                    `Cilindrada: ${data.cilindrada || ''}L, Cilindros: ${data.cilindros || ''}, Combustible: ${data.combustible || ''}, ` +
-                    `Transmisión: ${data.transmision || ''}, Ensamblaje: ${data.ensamblaje || ''}`;
-            })
-            .catch(err => {
-                alert("Error al buscar VIN: " + err);
+        function actualizarSeleccionados() {
+            let seleccionados = Array.from(checkboxes)
+                .filter(c => c.checked)
+                .map(c => c.value);
+
+            contenedorSeleccionados.innerHTML = '';
+
+            if (seleccionados.length === 0) {
+                contenedorSeleccionados.innerHTML = '<span class="text-muted small">Ningún servicio seleccionado</span>';
+                return;
+            }
+
+            seleccionados.forEach(servicio => {
+                let tag = document.createElement('span');
+                tag.className = 'badge bg-primary me-1 mb-1';
+                tag.textContent = servicio;
+                contenedorSeleccionados.appendChild(tag);
             });
-    });
-</script>
+        }
+    </script>
 
+</body>
 
 </html>

@@ -55,7 +55,7 @@ def orden():
     if request.method == "POST":
         ingreso = request.form.get("ingreso")
         if not ingreso:
-            return "\u26a0\ufe0f Debes ingresar la fecha de ingreso", 400
+            return "⚠️ Debes ingresar la fecha de ingreso", 400
 
         salida = request.form.get("salida") or None
 
@@ -81,7 +81,23 @@ def orden():
         supabase.table("orden_servicio").insert(datos).execute()
         return redirect(url_for("index"))
 
-    return render_template("orden_servicio.html")
+    # Obtener servicios agrupados por categoría
+    categorias_data = supabase.table(
+        "categorias_servicio").select("*").execute().data
+    servicios_data = supabase.table("servicios").select("*").execute().data
+
+    # Agrupar servicios por categoría
+    categorias = []
+    for cat in categorias_data:
+        cat_servicios = [
+            s for s in servicios_data if s["categoria_id"] == cat["id"]]
+        categorias.append({
+            "id": cat["id"],
+            "nombre": cat["nombre"],
+            "servicios": cat_servicios
+        })
+
+    return render_template("orden_servicio.html", categorias=categorias)
 
 # -------------------
 #   EDITAR ORDEN
