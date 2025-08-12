@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session, requests
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from auth import auth_bp, requiere_rol
