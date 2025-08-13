@@ -6,17 +6,25 @@
     <title>Orden de Servicio - Taller</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .list-group-position {
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body class="bg-light p-4">
     <div class="container">
         <h2 class="mb-4">Nueva Orden de Servicio</h2>
-        <form method="POST">
+
+        <form method="POST" id="ordenForm">
 
             <!-- Datos del Cliente -->
-            <div class="mb-4">
+            <section class="mb-4">
                 <h5>Datos del Cliente</h5>
-                <div class="row mb-2">
+                <div class="row g-2">
                     <div class="col">
                         <label>Nombre del Cliente</label>
                         <input class="form-control" name="nombre" required>
@@ -26,27 +34,34 @@
                         <input class="form-control" name="telefono">
                     </div>
                 </div>
-            </div>
+            </section>
 
             <!-- Datos del Vehículo -->
-            <div class="mb-4">
+            <section class="mb-4">
                 <h5>Datos del Vehículo</h5>
-                <div class="row mb-2">
-                    <div class="col">
+                <div class="row g-2">
+                    <div class="col position-relative">
                         <label>Marca</label>
-                        <input class="form-control" name="marca" required>
+                        <input type="text" class="form-control" name="marca" id="marcaInput" autocomplete="off"
+                            required>
+                        <div id="sugerenciasMarca" class="list-group list-group-position"></div>
                     </div>
-                    <div class="col">
+
+
+                    <div class="col position-relative">
                         <label>Modelo</label>
-                        <input class="form-control" name="modelo" required>
+                        <input type="text" class="form-control" name="modelo" id="modeloInput" autocomplete="off"
+                            required>
+                        <div id="sugerenciasModelo" class="list-group list-group-position"></div>
                     </div>
+
                     <div class="col">
                         <label>Año</label>
-                        <input class="form-control" name="ano" required>
+                        <input class="form-control" name="ano" autocomplete="off" required>
                     </div>
                 </div>
 
-                <div class="row mb-2">
+                <div class="row g-2 mt-2">
                     <div class="col">
                         <label>Kilometraje</label>
                         <input class="form-control" name="kilometraje" required>
@@ -64,21 +79,18 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                <div class="row g-2 mt-2 align-items-end">
+                    <div class="col-md-6">
                         <label>VIN</label>
                         <input type="text" class="form-control" name="vin" id="vinInput"
                             placeholder="Ej: WBA3A5106FJ542774">
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label>&nbsp;</label>
-                        <button type="button" class="btn btn-primary w-100" id="buscarVin">
-                            🔍 Buscar VIN
-                        </button>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary w-100" id="buscarVin">🔍 Buscar VIN</button>
                     </div>
                 </div>
 
-                <div class="row mb-3">
+                <div class="row g-2 mt-2">
                     <div class="col">
                         <label>Ingreso</label>
                         <input type="date" class="form-control" name="ingreso">
@@ -88,70 +100,63 @@
                         <input type="date" class="form-control" name="salida">
                     </div>
                 </div>
+            </section>
+
+            <!-- Vista previa servicios -->
+            <div class="mb-3 p-2 border rounded bg-white">
+                <strong>Servicios seleccionados:</strong>
+                <div id="serviciosSeleccionados" class="mt-2 text-muted small">Ningún servicio seleccionado</div>
             </div>
 
-            <!-- Servicios Solicitados -->
-            <div class="mb-3">
-                <h5>Servicios Solicitados</h5>
+            <!-- Buscador -->
+            <input type="text" id="buscarServicio" class="form-control mb-3" placeholder="Buscar servicio...">
 
-                <!-- Vista previa de seleccionados -->
-                <div class="mb-3 p-2 border rounded bg-white">
-                    <strong>Seleccionados:</strong>
-                    <div id="serviciosSeleccionados" class="mt-2">
-                        <span class="text-muted small">Ningún servicio seleccionado</span>
-                    </div>
-                </div>
-
-
-                <!-- Acordeón de categorías -->
-                <div class="accordion" id="accordionServicios">
-                    {% for categoria in categorias %}
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="heading{{ categoria.id }}">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapse{{ categoria.id }}" aria-expanded="false"
-                                aria-controls="collapse{{ categoria.id }}">
-                                {{ categoria.nombre }}
-                            </button>
-                        </h2>
-                        <div id="collapse{{ categoria.id }}" class="accordion-collapse collapse"
-                            aria-labelledby="heading{{ categoria.id }}" data-bs-parent="#accordionServicios">
-                            <div class="accordion-body">
-                                <div class="row">
-                                    {% for servicio in categoria.servicios %}
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input servicio-checkbox" type="checkbox"
-                                                name="servicios" value="{{ servicio.nombre }}">
-                                            <label class="form-check-label">{{ servicio.nombre }}</label>
-                                        </div>
+            <!-- Acordeón -->
+            <div class="accordion" id="accordionServicios">
+                {% for categoria in categorias %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ categoria.id }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ categoria.id }}">
+                            {{ categoria.nombre }}
+                            <span class="badge bg-primary ms-2 servicio-count" data-categoria="{{ categoria.id }}"
+                                style="display:none;">0</span>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ categoria.id }}" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionServicios">
+                        <div class="accordion-body">
+                            <div class="row mb-3 lista-servicios">
+                                {% for servicio in categoria.servicios %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input servicio-checkbox" type="checkbox"
+                                            name="servicios" value="{{ servicio.nombre }}">
+                                        <label class="form-check-label">{{ servicio.nombre }}</label>
                                     </div>
-                                    {% endfor %}
                                 </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="input-group">
+                                <input type="text" class="form-control input-servicio-personalizado"
+                                    placeholder="Nuevo servicio para {{ categoria.nombre }}">
+                                <button type="button" class="btn btn-success btn-agregar-servicio">
+                                    <i class="bi bi-plus-circle"></i> Agregar
+                                </button>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
+                {% endfor %}
             </div>
 
             <!-- Otros campos -->
-            <div class="mb-3">
-                <label>Daños Preexistentes</label>
-                <textarea class="form-control" name="danos"></textarea>
-            </div>
-            <div class="mb-3">
-                <label>Observaciones</label>
-                <textarea class="form-control" name="observaciones" required></textarea>
-            </div>
-            <div class="mb-3">
-                <label>Servicios Realizados / Refacciones</label>
-                <textarea class="form-control" name="realizados" required></textarea>
-            </div>
-            <div class="mb-3">
-                <label>Presupuesto Autorizado</label>
-                <input class="form-control" name="presupuesto">
-            </div>
+            <textarea class="form-control my-3" name="danos" placeholder="Daños Preexistentes"></textarea>
+            <textarea class="form-control mb-3" name="observaciones" required placeholder="Observaciones"></textarea>
+            <textarea class="form-control mb-3" name="realizados" required
+                placeholder="Servicios Realizados / Refacciones"></textarea>
+            <input class="form-control mb-3" name="presupuesto" placeholder="Presupuesto Autorizado">
 
             <!-- Botones -->
             <a href="{{ url_for('index') }}" class="btn btn-secondary">⬅ Volver</a>
@@ -159,68 +164,8 @@
         </form>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script VIN -->
-    <script>
-        document.getElementById("buscarVin").addEventListener("click", function () {
-            let vin = document.getElementById("vinInput").value.trim();
-            if (!vin) {
-                alert("Por favor ingresa un VIN válido.");
-                return;
-            }
-            fetch(`/api/vin/${vin}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-                    document.querySelector("[name='marca']").value = data.marca || "";
-                    document.querySelector("[name='modelo']").value = data.modelo || "";
-                    document.querySelector("[name='ano']").value = data.ano || "";
-                    document.querySelector("[name='observaciones']").value =
-                        `Carrocería: ${data.carroceria || ''}, Puertas: ${data.puertas || ''}, Motor: ${data.motor || ''}, ` +
-                        `Cilindrada: ${data.cilindrada || ''}L, Cilindros: ${data.cilindros || ''}, Combustible: ${data.combustible || ''}, ` +
-                        `Transmisión: ${data.transmision || ''}, Ensamblaje: ${data.ensamblaje || ''}`;
-                })
-                .catch(err => {
-                    alert("Error al buscar VIN: " + err);
-                });
-        });
-    </script>
-
-    <!-- Script para mostrar servicios seleccionados -->
-    <script>
-        const checkboxes = document.querySelectorAll('.servicio-checkbox');
-        const contenedorSeleccionados = document.getElementById('serviciosSeleccionados');
-
-        checkboxes.forEach(chk => {
-            chk.addEventListener('change', actualizarSeleccionados);
-        });
-
-        function actualizarSeleccionados() {
-            let seleccionados = Array.from(checkboxes)
-                .filter(c => c.checked)
-                .map(c => c.value);
-
-            contenedorSeleccionados.innerHTML = '';
-
-            if (seleccionados.length === 0) {
-                contenedorSeleccionados.innerHTML = '<span class="text-muted small">Ningún servicio seleccionado</span>';
-                return;
-            }
-
-            seleccionados.forEach(servicio => {
-                let tag = document.createElement('span');
-                tag.className = 'badge bg-primary me-1 mb-1';
-                tag.textContent = servicio;
-                contenedorSeleccionados.appendChild(tag);
-            });
-        }
-    </script>
-
+    <script src="{{ url_for('static', filename='js/orden_servicio.js') }}"></script>
 </body>
 
 </html>
