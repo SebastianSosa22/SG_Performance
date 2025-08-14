@@ -80,6 +80,11 @@ function actualizarSeleccionados() {
 
 // Agregar tag visual de servicio
 function agregarTagServicio(servicio) {
+    // Evitar duplicados
+    if (document.querySelector(`input[name="servicios"][value="${servicio}"]`)) {
+        return; // Ya existe, no hacemos nada
+    }
+
     const tag = document.createElement("span");
     tag.className = "badge bg-primary me-1 mb-1";
     tag.textContent = servicio;
@@ -100,6 +105,7 @@ function agregarTagServicio(servicio) {
     contenedorSeleccionados.appendChild(tag);
     contenedorSeleccionados.appendChild(hidden);
 }
+
 
 // Filtrar servicios y manejar acordeones
 function filtrarServicios() {

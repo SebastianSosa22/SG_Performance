@@ -52,10 +52,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Cliente</th>
-                    <th>Teléfono</th>
                     <th>Vehículo</th>
                     <th>Placas</th>
-                    <th>Servicios</th>
                     <th>Ingreso</th>
                     <th>Salida</th>
                     <th>Acciones</th>
@@ -66,10 +64,8 @@
                 <tr>
                     <td>{{ orden.id }}</td>
                     <td>{{ orden.nombre }}</td>
-                    <td>{{ orden.telefono }}</td>
                     <td>{{ orden.marca }} {{ orden.modelo }} {{ orden.ano }}</td>
                     <td>{{ orden.placas }}</td>
-                    <td>{{ orden.servicios }}</td>
                     <td>{{ orden.ingreso }}</td>
                     <td>
                         {% if orden.salida %}
@@ -86,7 +82,7 @@
                             <i class="bi bi-pencil"></i>
                         </a>
                         <a href="{{ url_for('borrar', orden_id=orden.id) }}" class="btn btn-danger btn-sm"
-                            onclick="return confirm('¿Seguro que quieres eliminar esta orden?')">
+                            onclick="return confirm('¿Seguro que quieres eliminar la orden ({orden.id}) ?')">
                             <i class="bi bi-trash"></i>
                         </a>
                     </td>

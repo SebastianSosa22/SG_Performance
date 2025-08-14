@@ -72,7 +72,8 @@ def orden():
             "salida": salida,
             "nombre": request.form["nombre"],
             "telefono": request.form["telefono"],
-            "servicios": ", ".join(request.form.getlist("servicios")),
+            # "servicios": ", ".join(request.form.getlist("servicios")),
+            "servicios": request.form["servicios"],
             "danos": request.form["danos"],
             "observaciones": request.form["observaciones"],
             "realizados": request.form["realizados"],
@@ -122,7 +123,8 @@ def editar_orden(orden_id):
             "ingreso": request.form.get("ingreso"),
             # Aquí se actualiza siempre
             "salida": request.form.get("salida") if request.form.get("salida") else None,
-            "servicios": ", ".join(request.form.getlist("servicios")),
+            # "servicios": ", ".join(request.form.getlist("servicios")),
+            "servicios": request.form["servicios"],
             "danos": request.form["danos"],
             "observaciones": request.form["observaciones"],
             "realizados": request.form["realizados"],
@@ -160,6 +162,16 @@ def detalle(orden_id):
 def borrar(orden_id):
     supabase.table("orden_servicio").delete().eq("id", orden_id).execute()
     return redirect(url_for("index"))
+
+# -------------------
+#   ACTUALIZAR  ORDEN
+# -------------------
+
+
+@app.route('/ordenes/actualizar/<int:id>', methods=['POST'])
+def actualizar_orden(id):
+    # lógica para guardar cambios
+    ...
 
 
 # -------------------

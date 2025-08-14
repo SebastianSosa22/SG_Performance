@@ -192,22 +192,21 @@
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col"> <!-- SERVICIOS -->
                 <div class="seccion">
                     <h5>Servicios Solicitados</h5>
-                    {% if orden.servicios %}
-                    {% for servicio in orden.servicios.replace("\r", "").split("\n") %}
-                    {% if servicio.strip() %}
-                    <li>{{ servicio.strip() }}</li>
-                    {% endif %}
-                    {% endfor %}
-                    {% else %}
-                    <li>No hay servicios registrados</li>
-                    {% endif %}
-
-                    <!-- <p>{{ orden.servicios }}</p> -->
+                    <ul>
+                        {% if orden.servicios %}
+                        {% for servicio in orden.servicios.replace("\r", "").split("\n") %}
+                        {% if servicio.strip() %}
+                        <li>{{ servicio.strip() }}</li>
+                        {% endif %}
+                        {% endfor %}
+                        {% else %}
+                        <li>No hay servicios registrados</li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
             <div class="col"><!-- DAÑOS -->
@@ -223,9 +222,7 @@
                         {% else %}
                         <li>No hay daños registrados</li>
                         {% endif %}
-
                     </ul>
-                    <!-- <p>{{ orden.danos }}</p> -->
                 </div>
             </div>
         </div>
@@ -234,7 +231,18 @@
         <!-- OBSERVACIONES -->
         <div class="seccion">
             <h5>Observaciones / Diagnóstico</h5>
-            <p>{{ orden.observaciones }}</p>
+            <!-- <p>{{ orden.observaciones }}</p> -->
+            <ul>
+                {% if orden.observaciones %}
+                {% for servicio in orden.observaciones.replace("\r", "").split("\n") %}
+                {% if servicio.strip() %}
+                <li>{{ servicio.strip() }}</li>
+                {% endif %}
+                {% endfor %}
+                {% else %}
+                <li>Pendiente</li>
+                {% endif %}
+            </ul>
         </div>
         <!-- SERVICIOS REALIZADOS -->
         <div class="seccion">
@@ -247,7 +255,7 @@
                 {% endif %}
                 {% endfor %}
                 {% else %}
-                <li>No hay realizados Servicios Realizados</li>
+                <li>Pendiente</li>
                 {% endif %}
             </ul>
         </div>

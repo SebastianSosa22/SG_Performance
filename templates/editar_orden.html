@@ -3,131 +3,179 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Editar Orden de Servicio</title>
+    <title>Editar Orden de Servicio - Taller</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .list-group-position {
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body class="bg-light p-4">
+    <div class="container">
+        <h2 class="mb-4">Editar Orden de Servicio</h2>
 
-    <div class="container mt-4">
-        <h2 class="mb-4">✏️ Editar Orden de Servicio</h2>
+        <form method="POST" id="ordenForm">
 
-        {% set servicios_seleccionados = orden.servicios.split(", ") if orden.servicios else [] %}
-
-        <form method="POST">
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label>Marca</label>
-                    <input type="text" class="form-control" name="marca" value="{{ orden.marca }}">
+            <!-- Datos del Cliente -->
+            <section class="mb-4">
+                <h5>Datos del Cliente</h5>
+                <div class="row g-2">
+                    <div class="col">
+                        <label>Nombre del Cliente</label>
+                        <input class="form-control" name="nombre" value="{{ orden.nombre }}" required>
+                    </div>
+                    <div class="col">
+                        <label>Teléfono</label>
+                        <input class="form-control" name="telefono" value="{{ orden.telefono }}">
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label>Modelo</label>
-                    <input type="text" class="form-control" name="modelo" value="{{ orden.modelo }}">
+            </section>
+
+            <!-- Datos del Vehículo -->
+            <section class="mb-4">
+                <h5>Datos del Vehículo</h5>
+                <div class="row g-2">
+                    <div class="col position-relative">
+                        <label>Marca</label>
+                        <input type="text" class="form-control" name="marca" id="marcaInput" placeholder="Ej: Toyota"
+                            autocomplete="off" value="{{ orden.marca }}" required>
+                        <div id="sugerenciasMarca" class="list-group list-group-position"></div>
+                    </div>
+                    <div class="col">
+                        <label>Modelo</label>
+                        <input class="form-control" name="modelo" value="{{ orden.modelo }}" required>
+                    </div>
+                    <div class="col">
+                        <label>Año</label>
+                        <input class="form-control" name="ano" value="{{ orden.ano }}" required>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label>Año</label>
-                    <input type="text" class="form-control" name="ano" value="{{ orden.ano }}">
+
+                <div class="row g-2 mt-2">
+                    <div class="col">
+                        <label>Kilometraje</label>
+                        <input class="form-control" name="kilometraje" value="{{ orden.kilometraje }}" required>
+                    </div>
+                    <div class="col">
+                        <label>Placas</label>
+                        <input class="form-control" name="placas" value="{{ orden.placas }}" required>
+                    </div>
+                    <div class="col">
+                        <label>Ingreso en grúa</label>
+                        <select class="form-select" name="ingreso_grua" required>
+                            <option {% if orden.ingreso_grua=="No" %}selected{% endif %}>No</option>
+                            <option {% if orden.ingreso_grua=="Sí" %}selected{% endif %}>Sí</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-2 align-items-end">
+                    <div class="col-md-6">
+                        <label>VIN</label>
+                        <input type="text" class="form-control" name="vin" id="vinInput"
+                            placeholder="Ej: WBA3A5106FJ542774" value="{{ orden.vin }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary w-100" id="buscarVin">🔍 Buscar VIN</button>
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-2">
+                    <div class="col">
+                        <label>Ingreso</label>
+                        <input type="date" class="form-control" name="ingreso" value="{{ orden.ingreso }}">
+                    </div>
+                    <div class="col">
+                        <label>Salida</label>
+                        <input type="date" class="form-control" name="salida" value="{{ orden.salida }}">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Servicios seleccionados -->
+            <div class="mb-3 p-2 border rounded bg-white">
+                <strong>Servicios seleccionados:</strong>
+                <div id="serviciosSeleccionados" class="mt-2 text-muted small">
+                    {% if orden.servicios %}
+                    {% for servicio in orden.servicios.split(',') %}
+                    <span class="badge bg-primary me-1 mb-1">{{ servicio.strip() }}</span>
+                    <input type="hidden" name="servicios" value="{{ servicio.strip() }}">
+                    {% endfor %}
+                    {% else %}
+                    Ningún servicio seleccionado
+                    {% endif %}
+
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label>Nombre del Cliente</label>
-                    <input type="text" class="form-control" name="nombre" value="{{ orden.nombre }}">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Teléfono</label>
-                    <input type="text" class="form-control" name="telefono" value="{{ orden.telefono }}">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Placas</label>
-                    <input type="text" class="form-control" name="placas" value="{{ orden.placas }}">
-                </div>
-            </div>
+            <!-- Buscador de servicios -->
+            <!-- <input type="text" id="buscarServicio" class="form-control mb-3" placeholder="Buscar servicio..."> -->
 
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label>VIN</label>
-                    <input type="text" class="form-control" name="vin" value="{{ orden.vin }}">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Kilometraje</label>
-                    <input type="text" class="form-control" name="kilometraje" value="{{ orden.kilometraje }}">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <label>Ingreso con Grúa</label>
-                    <select class="form-control" name="ingreso_grua">
-                        <option value="Sí" {% if orden.ingreso_grua=="Sí" %}selected{% endif %}>Sí</option>
-                        <option value="No" {% if orden.ingreso_grua=="No" %}selected{% endif %}>No</option>
-                    </select>
-                </div>
-            </div>
+            <!-- Acordeón de servicios -->
+            <div class="accordion" id="accordionServicios">
+                {% for categoria in categorias %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ categoria.id }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ categoria.id }}">
+                            {{ categoria.nombre }}
+                            <span class="badge bg-primary ms-2 servicio-count" data-categoria="{{ categoria.id }}"
+                                style="display:none;">0</span>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ categoria.id }}" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionServicios">
+                        <div class="accordion-body">
+                            <div class="row mb-3 lista-servicios">
+                                {% for servicio in categoria.servicios %}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input servicio-checkbox" type="checkbox"
+                                            name="servicios" value="{{ servicio.nombre }}" {% if servicio.nombre in
+                                            orden.servicios %}checked{% endif %}>
+                                        <label class="form-check-label">{{ servicio.nombre }}</label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label>Fecha de Ingreso</label>
-                    <input type="date" class="form-control" name="ingreso" value="{{ orden.ingreso }}">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label>Fecha de Salida</label>
-                    <input type="date" class="form-control" name="salida" value="{{ orden.salida }}">
-                </div>
-            </div>
-
-            <hr>
-            <label>Servicios Solicitados</label>
-            <input type="text" class="form-control mb-2" id="buscarServicio" placeholder="Buscar servicio...">
-            <div id="listaServicios">
-                {% set lista_servicios = [
-                "Cambio de aceite", "Frenos", "Alineación", "Balanceo",
-                "Revisión de motor", "Cambio de llantas", "Afinación",
-                "Cambio de batería", "Revisión eléctrica", "Cambio de bujías"
-                ] %}
-                {% for servicio in lista_servicios %}
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="servicios" value="{{ servicio }}" {% if
-                        servicio in servicios_seleccionados %}checked{% endif %}>
-                    <label class="form-check-label">{{ servicio }}</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control input-servicio-personalizado"
+                                    placeholder="Nuevo servicio para {{ categoria.nombre }}">
+                                <button type="button" class="btn btn-success btn-agregar-servicio">
+                                    <i class="bi bi-plus-circle"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
 
-            <div class="mb-3">
-                <label>Daños</label>
-                <textarea class="form-control" name="danos">{{ orden.danos }}</textarea>
-            </div>
-            <div class="mb-3">
-                <label>Observaciones</label>
-                <textarea class="form-control" name="observaciones">{{ orden.observaciones }}</textarea>
-            </div>
-            <div class="mb-3">
-                <label>Servicios Realizados</label>
-                <textarea class="form-control" name="realizados">{{ orden.realizados }}</textarea>
-            </div>
-            <div class="mb-3">
-                <label>Presupuesto</label>
-                <input type="text" class="form-control" name="presupuesto" value="{{ orden.presupuesto }}">
-            </div>
+            <!-- Otros campos -->
+            <textarea class="form-control my-3" name="danos"
+                placeholder="Daños Preexistentes">{{ orden.danos }}</textarea>
+            <textarea class="form-control mb-3" name="observaciones"
+                placeholder="Observaciones">{{ orden.observaciones }}</textarea>
+            <textarea class="form-control mb-3" name="realizados"
+                placeholder="Servicios Realizados / Refacciones">{{ orden.realizados }}</textarea>
+            <input class="form-control mb-3" name="presupuesto" placeholder="Presupuesto Autorizado"
+                value="{{ orden.presupuesto }}">
 
-            <div class="mt-4">
-                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
-                <button type="submit" class="btn btn-success">💾 Guardar Cambios</button>
-            </div>
+            <!-- Botones -->
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">⬅ Volver</a>
+            <button class="btn btn-primary">Guardar</button>
         </form>
     </div>
 
-    <script>
-        document.getElementById('buscarServicio').addEventListener('keyup', function () {
-            let filtro = this.value.toLowerCase();
-            let items = document.querySelectorAll('#listaServicios .form-check');
-            items.forEach(function (item) {
-                let texto = item.textContent.toLowerCase();
-                item.style.display = texto.includes(filtro) ? '' : 'none';
-            });
-        });
-    </script>
-
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/orden_servicio.js') }}"></script>
 </body>
 
 </html>
